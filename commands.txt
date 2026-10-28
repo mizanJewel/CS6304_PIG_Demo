@@ -1,6 +1,6 @@
 pig -x local
 
-AllLines = LOAD '/home/cloudera/Downloads/PIG_Demo-master/input.txt' Using PigStorage('\t') AS (line: chararray, chapterCounter: int);
+AllLines = LOAD '/home/<user_id>/git/CS6304_PIG_Demo/input.txt' Using PigStorage('\t') AS (line: chararray, chapterCounter: int);
 
 AllWords = foreach AllLines generate flatten(TOKENIZE(line)) as word, chapterCounter;
 
@@ -23,6 +23,37 @@ LimitedWords = Limit OrderedWords 2;
 Dump LimitedWords;
 
 
+** Notes if Limit doesn't work **
+
+Try this version of your final pipeline:
+
+CommonChapWords = FILTER WordsFinal BY (chapterTotal == 3L);
+
+OrderedWords = ORDER CommonChapWords BY occurrenceTotal DESC;
+
+STORE OrderedWords INTO '/home/mj9vc/ordered_words_output'
+    USING PigStorage('\t');
+
+
+Then, in a new Pig session:
+
+Reloaded = LOAD '/home/mj9vc/ordered_words_output'
+    USING PigStorage('\t')
+    AS (word:chararray, chapterTotal:long, occurrenceTotal:long);
+
+LimitedWords = LIMIT Reloaded 2;
+
+DUMP LimitedWords;
+
+
+Expected output:
+(E,3,7)
+(A,3,5)
+
+
+This is a valid workaround for your assignment in local mode.
+** --------------------- **
+
 *** --- ***
 //Alternate way to get CommonChapWords when you don't know the total chapter number
 ChapterNumber = foreach AllLines generate chapterCounter;
@@ -34,4 +65,4 @@ CommonChapWords = Filter WordsFinal By (chapterTotal == (LONG)MaxChapter.chapter
 
 ctrl+z
 
-pig -x local '/home/cloudera/Downloads/PIG_Demo-master/script.pig'
+pig -x local '/home/<user_id>/git/CS6304_PIG_Demo/script.pig'
