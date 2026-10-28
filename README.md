@@ -12,7 +12,8 @@ tar -xvf pig-0.17.0.tar.gz
 mv pig-0.17.0/ /opt/pig  
 
 #Set up PIG profile  
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre  
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export PATH="$JAVA_HOME/bin:$PATH"
 export PIG_HOME=/opt/pig  
 export PATH=$PATH:$PIG_HOME/bin  
 export PIG_CLASSPATH=$HADOOP_HOME/conf  
